@@ -548,6 +548,198 @@
 
   .observation-list { display: flex; flex-direction: column; gap: 0.875rem; }
 
+  .weight-chart-wrap {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 0.5rem 0.5rem;
+    position: relative;
+  }
+  .weight-chart-wrap svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .chart-empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    padding: 1.75rem 0.5rem;
+  }
+  .chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 11px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+  .chart-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .chart-legend .dot {
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+  }
+  .chart-legend .dot.line { background: var(--primary); }
+  .chart-legend .dot.month { background: #cbd5e0; }
+  .chart-legend .dot.zone-green { background: #86c466; }
+  .chart-legend .dot.zone-red { background: #e8a4a4; }
+
+  .zone-config {
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+  }
+  .zone-config-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .zone-config-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .zone-config-inputs input {
+    width: 60px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    background: white;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .zone-config-inputs input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(31, 78, 120, 0.12);
+  }
+  .zone-dash { color: var(--text-muted); font-size: 13px; }
+  .zone-auto-btn {
+    padding: 6px 10px;
+    border: 1px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .zone-auto-btn:hover { background: var(--primary-soft); }
+  .zone-auto-btn:active { transform: translateY(1px); }
+
+  .zone-hint {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    padding: 6px 10px;
+    background: var(--primary-soft);
+    border-radius: 6px;
+  }
+
+  /* Interactive elements inside the SVG */
+  .chart-overlay { cursor: crosshair; }
+  .chart-dot { transition: r 0.12s ease; }
+  .chart-hover-line {
+    stroke: var(--primary);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s;
+  }
+  .chart-hover-line.active { opacity: 0.55; }
+
+  /* Floating tooltip — professional multi-row layout */
+  .chart-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: #111827;
+    color: white;
+    padding: 8px 10px 8px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+    transform: translate(-50%, calc(-100% - 14px));
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.1s ease, left 0.05s linear, top 0.05s linear;
+    z-index: 5;
+    min-width: 138px;
+  }
+  .chart-tooltip.visible { opacity: 1; }
+  .chart-tooltip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #111827;
+  }
+  .chart-tooltip .tt-title {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #d1d5db;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding-bottom: 4px;
+  }
+  .chart-tooltip .tt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .chart-tooltip .tt-row + .tt-row { margin-top: 2px; }
+  .chart-tooltip .tt-label {
+    font-size: 10.5px;
+    color: #9ca3af;
+    font-weight: 500;
+  }
+  .chart-tooltip .tt-val {
+    font-size: 12.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: white;
+  }
+  .chart-tooltip .tt-val.muted { color: #9ca3af; font-weight: 500; font-size: 11px; }
+  .chart-tooltip .tt-val.green { color: #a7d68a; }
+  .chart-tooltip .tt-val.red { color: #fca5a5; }
+  .chart-tooltip .tt-status {
+    margin-top: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+  .chart-tooltip .tt-status.green { background: rgba(167, 214, 138, 0.18); color: #a7d68a; }
+  .chart-tooltip .tt-status.red { background: rgba(252, 165, 165, 0.18); color: #fca5a5; }
+  .chart-tooltip .tt-status.neutral { background: rgba(156, 163, 175, 0.18); color: #d1d5db; }
+  .chart-tooltip .tt-status.below { background: rgba(96, 165, 250, 0.18); color: #93c5fd; }
+
   .toast {
     position: fixed;
     bottom: 24px;
@@ -679,6 +871,29 @@
         </thead>
         <tbody id="weeklyProgressBody"></tbody>
       </table>
+    </div>
+
+    <div class="summary-section">
+      <h3>Weight Trend</h3>
+      <div class="zone-config">
+        <div class="zone-config-label">Expected total loss (kg)</div>
+        <div class="zone-config-inputs">
+          <input type="text" id="zone-loss-min" placeholder="min" inputmode="decimal">
+          <span class="zone-dash">–</span>
+          <input type="text" id="zone-loss-max" placeholder="max" inputmode="decimal">
+          <button type="button" class="zone-auto-btn" id="zoneAutoBtn" title="Use program default 4–6 kg">Auto</button>
+        </div>
+      </div>
+      <div class="zone-hint" id="zoneHint" style="display:none;"></div>
+      <div class="weight-chart-wrap" id="weightChartWrap">
+        <div class="chart-empty" id="chartEmpty">Log weights on at least 2 weeks to see the trend</div>
+      </div>
+      <div class="chart-legend" id="chartLegend" style="display:none;">
+        <span><span class="dot line"></span>Weight</span>
+        <span><span class="dot zone-green"></span>Target zone</span>
+        <span><span class="dot zone-red"></span>Above target</span>
+        <span><span class="dot month"></span>Month boundary</span>
+      </div>
     </div>
 
     <div class="summary-section">
@@ -1226,6 +1441,430 @@
       changeEl.classList.add('empty');
       changeEl.style.color = '';
     }
+
+    renderWeightChart(allWeights);
+  }
+
+  // ---------- Weight chart ----------
+  // Returns { startW, lossMin, lossMax } if all valid, else null.
+  function getZoneConfig() {
+    const lossMinEl = document.getElementById('zone-loss-min');
+    const lossMaxEl = document.getElementById('zone-loss-max');
+    if (!lossMinEl || !lossMaxEl) return null;
+    const lossMin = parseFloat((lossMinEl.value || '').replace(/[^\d.]/g, ''));
+    const lossMax = parseFloat((lossMaxEl.value || '').replace(/[^\d.]/g, ''));
+    if (isNaN(lossMin) || isNaN(lossMax) || lossMin >= lossMax) return null;
+    const startW = getWeight(1, 1);
+    if (startW === null) return null;
+    return { startW: startW, lossMin: lossMin, lossMax: lossMax };
+  }
+
+  // Returns { upper, lower } expected weight bounds for a given week, or null.
+  // Uses an exponential decay curve so the band is front-loaded (faster loss
+  // expected in weeks 1–4 from water/glycogen + initial fat, slowing in weeks
+  // 9–12 as metabolism adapts). At progress=0 (week 1), no loss is expected.
+  // At progress=1 (week 12), the full loss target is reached.
+  const SHAPE_K = 1.2;
+  const SHAPE_DENOM = 1 - Math.exp(-SHAPE_K);
+  function shapeFunc(progress) {
+    return (1 - Math.exp(-SHAPE_K * progress)) / SHAPE_DENOM;
+  }
+
+  function zoneBoundsFor(cfg, month, week) {
+    if (!cfg) return null;
+    const slot = (month - 1) * 4 + (week - 1); // 0..11
+    const progress = slot / 11;                // 0 at week 1, 1 at week 12
+    const s = shapeFunc(progress);
+    return {
+      upper: cfg.startW - cfg.lossMin * s, // max allowed weight (above this = red)
+      lower: cfg.startW - cfg.lossMax * s  // min expected weight
+    };
+  }
+
+  function renderWeightChart(allWeights) {
+    const wrap = document.getElementById('weightChartWrap');
+    const legend = document.getElementById('chartLegend');
+    const hint = document.getElementById('zoneHint');
+    if (!wrap) return;
+
+    // Update hint based on inputs/Week-1 state
+    if (hint) {
+      const lossMinEl = document.getElementById('zone-loss-min');
+      const lossMaxEl = document.getElementById('zone-loss-max');
+      const hasLoss = lossMinEl && lossMaxEl && lossMinEl.value && lossMaxEl.value;
+      const hasW1 = getWeight(1, 1) !== null;
+      if (hasLoss && !hasW1) {
+        hint.textContent = 'Enter your Week 1 weight (Month 1, Week 1) to see the target band on the chart.';
+        hint.style.display = 'block';
+      } else {
+        hint.style.display = 'none';
+      }
+    }
+
+    const rawPts = allWeights
+      .map((w) => ({ month: w.month, week: w.week, weight: w.weight }))
+      .filter(p => p.weight !== null);
+
+    // Need at least 2 points to draw a line
+    if (rawPts.length < 2) {
+      wrap.innerHTML = '<div class="chart-empty">Log weights on at least 2 weeks to see the trend</div>';
+      if (legend) legend.style.display = 'none';
+      return;
+    }
+
+    // Augment with slot info and sort
+    const points = rawPts.map(p => ({
+      ...p,
+      slot: (p.month - 1) * 4 + (p.week - 1)
+    })).sort((a, b) => a.slot - b.slot);
+
+    // Chart dimensions
+    const W = 600, H = 240;
+    const padL = 38, padR = 18, padT = 20, padB = 32;
+    const innerW = W - padL - padR;
+    const innerH = H - padT - padB;
+    const totalSlots = 12;
+
+    const cfg = getZoneConfig();
+
+    // Y scale — include zone extents so the band always fits visually
+    const weights = points.map(p => p.weight);
+    const yCandidates = [...weights];
+    if (cfg) {
+      yCandidates.push(cfg.startW);
+      yCandidates.push(cfg.startW - cfg.lossMax);
+    }
+    const minW = Math.min(...yCandidates);
+    const maxW = Math.max(...yCandidates);
+    const span = Math.max(maxW - minW, 1);
+    const yPad = span * 0.18;
+    const yMin = Math.floor((minW - yPad) * 2) / 2;
+    const yMax = Math.ceil((maxW + yPad) * 2) / 2;
+    const yRange = (yMax - yMin) || 1;
+
+    // Coord helpers
+    const xForSlot = (slot) => padL + (slot / (totalSlots - 1)) * innerW;
+    const slotForX = (svgX) => Math.max(0, Math.min(11, ((svgX - padL) / innerW) * 11));
+    const yFor = (w) => padT + (1 - (w - yMin) / yRange) * innerH;
+
+    // Y-axis ticks (5 lines, rounded to .5)
+    const ticks = [];
+    for (let i = 0; i <= 4; i++) {
+      const v = yMin + (yRange * i / 4);
+      ticks.push({ v: v, y: yFor(v) });
+    }
+
+    // ---- Smoothed line via Catmull-Rom → Bezier ----
+    const linePts = points.map(p => [xForSlot(p.slot), yFor(p.weight)]);
+    function catmullRomPath(pts, tension) {
+      if (pts.length < 2) return '';
+      tension = tension == null ? 0.5 : tension;
+      let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[Math.max(i - 1, 0)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(i + 2, pts.length - 1)];
+        const cp1x = p1[0] + (p2[0] - p0[0]) * tension / 3;
+        const cp1y = p1[1] + (p2[1] - p0[1]) * tension / 3;
+        const cp2x = p2[0] - (p3[0] - p1[0]) * tension / 3;
+        const cp2y = p2[1] - (p3[1] - p1[1]) * tension / 3;
+        d += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`;
+      }
+      return d;
+    }
+    const linePath = catmullRomPath(linePts, 0.5);
+    const firstX = linePts[0][0].toFixed(2);
+    const lastX = linePts[linePts.length - 1][0].toFixed(2);
+    const baselineY = (padT + innerH).toFixed(2);
+    const areaPath = `${linePath} L ${lastX} ${baselineY} L ${firstX} ${baselineY} Z`;
+
+    // Month dividers + labels
+    const dividers = [4, 8].map(slot => padL + (slot - 0.5) / (totalSlots - 1) * innerW);
+    const monthLabels = [
+      { month: 1, x: padL + (1.5 / (totalSlots - 1)) * innerW },
+      { month: 2, x: padL + (5.5 / (totalSlots - 1)) * innerW },
+      { month: 3, x: padL + (9.5 / (totalSlots - 1)) * innerW }
+    ];
+
+    // ---- Sloping zone bands (curved per real-world physiology) ----
+    let zoneBands = '';
+    if (cfg) {
+      const xL = padL;
+      const xR = padL + innerW;
+      const SAMPLES = 50;
+      const upperPts = [];
+      const lowerPts = [];
+      for (let i = 0; i < SAMPLES; i++) {
+        const progress = i / (SAMPLES - 1);
+        const slot = progress * 11;
+        const x = padL + (slot / 11) * innerW;
+        const s = shapeFunc(progress);
+        upperPts.push([x, yFor(cfg.startW - cfg.lossMin * s)]);
+        lowerPts.push([x, yFor(cfg.startW - cfg.lossMax * s)]);
+      }
+      const ptStr = pts => pts.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+      const greenPolygon = [...upperPts, ...lowerPts.slice().reverse()];
+      const redPolygon = [
+        [xL, padT],
+        [xR, padT],
+        ...upperPts.slice().reverse()
+      ];
+      zoneBands += `<polygon points="${ptStr(greenPolygon)}" fill="#86c466" fill-opacity="0.20"/>`;
+      zoneBands += `<polygon points="${ptStr(redPolygon)}" fill="#e8a4a4" fill-opacity="0.22"/>`;
+      zoneBands += `<polyline points="${ptStr(upperPts)}" fill="none" stroke="#c97070" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>`;
+      zoneBands += `<polyline points="${ptStr(lowerPts)}" fill="none" stroke="#5a8c3a" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>`;
+    }
+
+    // Gridlines
+    let gridLines = '';
+    ticks.forEach((t, i) => {
+      const isBaseline = i === 0;
+      gridLines += `<line x1="${padL}" y1="${t.y.toFixed(2)}" x2="${padL + innerW}" y2="${t.y.toFixed(2)}" stroke="${isBaseline ? '#d1d5db' : '#eef0f3'}" stroke-width="1"/>`;
+      gridLines += `<text x="${padL - 8}" y="${(t.y + 3.5).toFixed(2)}" text-anchor="end" font-size="10" fill="#9ca3af" font-family="-apple-system, sans-serif">${t.v.toFixed(1)}</text>`;
+    });
+
+    let dividerLines = '';
+    dividers.forEach(x => {
+      dividerLines += `<line x1="${x.toFixed(2)}" y1="${padT}" x2="${x.toFixed(2)}" y2="${padT + innerH}" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3 4"/>`;
+    });
+
+    let monthLabelText = '';
+    monthLabels.forEach(m => {
+      monthLabelText += `<text x="${m.x.toFixed(2)}" y="${(H - 10).toFixed(2)}" text-anchor="middle" font-size="11" fill="#6b7280" font-weight="500" font-family="-apple-system, sans-serif">Month ${m.month}</text>`;
+    });
+
+    // Plot dots — colored by per-week zone status
+    let dots = '';
+    points.forEach((p, i) => {
+      const cx = xForSlot(p.slot).toFixed(2);
+      const cy = yFor(p.weight).toFixed(2);
+      let fill = '#1F4E78';
+      const b = zoneBoundsFor(cfg, p.month, p.week);
+      if (b) {
+        if (p.weight > b.upper) fill = '#B91C1C';
+        else if (p.weight >= b.lower) fill = '#3B6D11';
+      }
+      dots += `<circle class="chart-dot" cx="${cx}" cy="${cy}" r="3.6" fill="${fill}" stroke="white" stroke-width="2"/>`;
+    });
+
+    // Crosshair elements
+    const hoverLine = `<line class="chart-hover-line" id="chartHoverLine" x1="0" y1="${padT}" x2="0" y2="${padT + innerH}"/>`;
+    const hoverDot = `<circle id="chartHoverDot" cx="-100" cy="-100" r="5.5" fill="white" stroke="#1F4E78" stroke-width="2.5" style="opacity:0; transition:opacity 0.12s;"/>`;
+    // Bottom "current week" pill that follows the cursor
+    const hoverWeekLabel = `<g id="chartHoverWeekLabel" style="opacity:0; transition:opacity 0.12s;">
+        <rect x="0" y="${(padT + innerH + 6).toFixed(2)}" width="46" height="16" rx="3" fill="#1F4E78"/>
+        <text x="23" y="${(padT + innerH + 17.5).toFixed(2)}" text-anchor="middle" font-size="10" fill="white" font-weight="600" font-family="-apple-system, sans-serif">M? W?</text>
+      </g>`;
+
+    // Transparent overlay rect captures all hover/touch events anywhere in the plot area
+    const overlay = `<rect class="chart-overlay" id="chartOverlay" x="${padL}" y="${padT}" width="${innerW}" height="${innerH}" fill="transparent"/>`;
+
+    const svg = `
+      <svg id="chartSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Weight trend chart">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1F4E78" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#1F4E78" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="lineShadow" x="-2%" y="-2%" width="104%" height="110%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#1F4E78" flood-opacity="0.18"/>
+          </filter>
+        </defs>
+        ${zoneBands}
+        ${gridLines}
+        ${dividerLines}
+        <path d="${areaPath}" fill="url(#areaGrad)"/>
+        <path d="${linePath}" fill="none" stroke="#1F4E78" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" filter="url(#lineShadow)"/>
+        ${dots}
+        ${hoverLine}
+        ${hoverDot}
+        ${hoverWeekLabel}
+        ${monthLabelText}
+        ${overlay}
+      </svg>
+      <div class="chart-tooltip" id="chartTooltip" role="tooltip" aria-hidden="true">
+        <div class="tt-title" id="ttTitle">Month – · Week –</div>
+        <div class="tt-row"><span class="tt-label">Weight</span><span class="tt-val" id="ttWeight">— kg</span></div>
+        <div class="tt-row" id="ttTargetRow"><span class="tt-label">Target</span><span class="tt-val muted" id="ttTarget">—</span></div>
+        <div class="tt-status neutral" id="ttStatus" style="display:none;"></div>
+      </div>`;
+
+    wrap.innerHTML = svg;
+    if (legend) legend.style.display = 'flex';
+
+    // ============== Crosshair / hover wiring ==============
+    const svgEl = document.getElementById('chartSvg');
+    const overlayEl = document.getElementById('chartOverlay');
+    const tooltip = document.getElementById('chartTooltip');
+    const ttTitle = document.getElementById('ttTitle');
+    const ttWeight = document.getElementById('ttWeight');
+    const ttTarget = document.getElementById('ttTarget');
+    const ttTargetRow = document.getElementById('ttTargetRow');
+    const ttStatus = document.getElementById('ttStatus');
+    const hoverLineEl = document.getElementById('chartHoverLine');
+    const hoverDotEl = document.getElementById('chartHoverDot');
+    const hoverWeekG = document.getElementById('chartHoverWeekLabel');
+    const hoverWeekRect = hoverWeekG.querySelector('rect');
+    const hoverWeekText = hoverWeekG.querySelector('text');
+
+    // Linear-interpolate the line value at a given fractional slot
+    function weightAtSlot(slot) {
+      if (slot < points[0].slot || slot > points[points.length - 1].slot) return null;
+      for (let i = 0; i < points.length - 1; i++) {
+        if (slot >= points[i].slot && slot <= points[i + 1].slot) {
+          const sA = points[i].slot, sB = points[i + 1].slot;
+          if (sA === sB) return points[i].weight;
+          const t = (slot - sA) / (sB - sA);
+          return points[i].weight + (points[i + 1].weight - points[i].weight) * t;
+        }
+      }
+      return points[points.length - 1].weight;
+    }
+
+    function slotToMonthWeek(slotInt) {
+      const month = Math.floor(slotInt / 4) + 1;
+      const week = (slotInt % 4) + 1;
+      return { month, week };
+    }
+
+    // Convert pointer event to SVG (viewBox) X
+    function eventToSvgX(evt) {
+      const rect = svgEl.getBoundingClientRect();
+      const cx = (evt.clientX !== undefined) ? evt.clientX : (evt.touches && evt.touches[0] ? evt.touches[0].clientX : 0);
+      const x = cx - rect.left;
+      return (x / rect.width) * W;
+    }
+
+    function updateForSvgX(svgX) {
+      // Snap to nearest week (slot 0..11)
+      const fractionalSlot = slotForX(svgX);
+      const slotInt = Math.round(fractionalSlot);
+      const snappedX = xForSlot(slotInt);
+      const { month, week } = slotToMonthWeek(slotInt);
+
+      // Compute weight (interpolated) and zone bounds at snapped slot
+      const wInterp = weightAtSlot(slotInt);
+      const bounds = zoneBoundsFor(cfg, month, week);
+
+      // Update title
+      ttTitle.textContent = `Month ${month} · Week ${week}`;
+
+      // Update weight row
+      if (wInterp !== null) {
+        ttWeight.textContent = wInterp.toFixed(1) + ' kg';
+        ttWeight.classList.remove('muted');
+      } else {
+        ttWeight.textContent = 'no data';
+        ttWeight.classList.add('muted');
+      }
+
+      // Update target row
+      if (bounds) {
+        ttTarget.textContent = `${bounds.lower.toFixed(1)}–${bounds.upper.toFixed(1)} kg`;
+        ttTarget.classList.remove('muted');
+        ttTargetRow.style.display = 'flex';
+      } else {
+        ttTargetRow.style.display = 'none';
+      }
+
+      // Update status pill
+      if (wInterp !== null && bounds) {
+        ttStatus.style.display = 'block';
+        ttStatus.classList.remove('green', 'red', 'below', 'neutral');
+        if (wInterp > bounds.upper) {
+          ttStatus.textContent = 'Above target';
+          ttStatus.classList.add('red');
+        } else if (wInterp >= bounds.lower) {
+          ttStatus.textContent = 'On track';
+          ttStatus.classList.add('green');
+        } else {
+          ttStatus.textContent = 'Ahead of plan';
+          ttStatus.classList.add('below');
+        }
+      } else {
+        ttStatus.style.display = 'none';
+      }
+
+      // Position crosshair and dot
+      hoverLineEl.setAttribute('x1', snappedX);
+      hoverLineEl.setAttribute('x2', snappedX);
+      hoverLineEl.classList.add('active');
+
+      if (wInterp !== null) {
+        const dotY = yFor(wInterp);
+        hoverDotEl.setAttribute('cx', snappedX);
+        hoverDotEl.setAttribute('cy', dotY);
+        hoverDotEl.style.opacity = '1';
+      } else {
+        hoverDotEl.style.opacity = '0';
+      }
+
+      // Position bottom week label pill
+      const labelW = 46;
+      const labelX = snappedX - labelW / 2;
+      hoverWeekRect.setAttribute('x', labelX);
+      hoverWeekText.setAttribute('x', snappedX);
+      hoverWeekText.textContent = `M${month} W${week}`;
+      hoverWeekG.style.opacity = '1';
+
+      // Position the HTML tooltip (in wrap-relative pixel coords)
+      // Anchor it above the line dot if available; otherwise near the upper band
+      const wrapRect = wrap.getBoundingClientRect();
+      const svgRect = svgEl.getBoundingClientRect();
+      const scaleX = svgRect.width / W;
+      const scaleY = svgRect.height / H;
+      const anchorY = (wInterp !== null) ? yFor(wInterp) : (bounds ? yFor(bounds.upper) : padT);
+      const px = (svgRect.left - wrapRect.left) + snappedX * scaleX;
+      const py = (svgRect.top - wrapRect.top) + anchorY * scaleY;
+
+      // Clamp tooltip horizontally so it doesn't escape the container
+      tooltip.style.left = px + 'px';
+      tooltip.style.top = py + 'px';
+
+      // Once positioned, measure and clamp to the wrap bounds
+      const ttWidth = tooltip.offsetWidth;
+      const halfW = ttWidth / 2;
+      const minLeft = halfW + 4;
+      const maxLeft = wrapRect.width - halfW - 4;
+      const clampedX = Math.max(minLeft, Math.min(maxLeft, px));
+      tooltip.style.left = clampedX + 'px';
+
+      tooltip.classList.add('visible');
+      tooltip.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideAll() {
+      tooltip.classList.remove('visible');
+      tooltip.setAttribute('aria-hidden', 'true');
+      hoverLineEl.classList.remove('active');
+      hoverDotEl.style.opacity = '0';
+      hoverWeekG.style.opacity = '0';
+    }
+
+    // Mouse events
+    svgEl.addEventListener('mousemove', e => {
+      const x = eventToSvgX(e);
+      if (x < padL || x > padL + innerW) { hideAll(); return; }
+      updateForSvgX(x);
+    });
+    svgEl.addEventListener('mouseleave', hideAll);
+
+    // Touch events (drag to scrub)
+    svgEl.addEventListener('touchstart', e => {
+      const x = eventToSvgX(e);
+      if (x < padL || x > padL + innerW) return;
+      updateForSvgX(x);
+    }, { passive: true });
+    svgEl.addEventListener('touchmove', e => {
+      const x = eventToSvgX(e);
+      if (x < padL || x > padL + innerW) { hideAll(); return; }
+      updateForSvgX(x);
+    }, { passive: true });
+    svgEl.addEventListener('touchend', () => {
+      // Keep tooltip visible briefly, then hide
+      setTimeout(hideAll, 1500);
+    });
   }
 
   // ---------- Misc ----------
@@ -1315,6 +1954,21 @@
       if (document.getElementById('page-summary').classList.contains('active')) {
         refreshSummary();
       }
+    }
+  });
+
+  // Auto-fill expected loss range from the program's stated 9–13 lb (≈ 4–6 kg) target
+  document.addEventListener('click', e => {
+    if (e.target.id === 'zoneAutoBtn') {
+      const minEl = document.getElementById('zone-loss-min');
+      const maxEl = document.getElementById('zone-loss-max');
+      if (minEl) minEl.value = '4';
+      if (maxEl) maxEl.value = '6';
+      saveState();
+      refreshSummary();
+      const w1 = getWeight(1, 1);
+      if (w1 === null) showToast('Set 4–6 kg · log Week 1 weight to draw band');
+      else showToast('Target loss set: 4–6 kg');
     }
   });
 
