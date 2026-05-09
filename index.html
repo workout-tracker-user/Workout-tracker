@@ -1685,25 +1685,19 @@
     }
 
     // Photo collage with week tags
-    let photoHTML = '';
     const photoEntries = [];
     for (let m = 1; m <= NUM_MONTHS; m++) for (let wk = 1; wk <= WEEKS_PER_MONTH; wk++) {
       const k = `m${m}-w${wk}`;
       const wkNum = (m-1)*4 + wk;
       if (DATA.photos[k]) photoEntries.push({ k, wkNum, m, wk, src: DATA.photos[k] });
     }
+    const PHOTOS_PER_PAGE = 6;
+    const photoChunks = [];
     if (photoEntries.length === 0) {
-      photoHTML = `<div class="empty-block">No progress photos uploaded.</div>`;
+      photoChunks.push([]);
     } else {
-      photoHTML = `<div class="photo-grid">` + photoEntries.map(p =>
-        `<div class="photo-item">
-          <img src="${p.src}" alt="Week ${p.wkNum}">
-          <div class="photo-caption">
-            <div class="photo-week">Week ${p.wkNum}</div>
-            <div class="photo-sub">Month ${p.m} &middot; Week ${p.wk}</div>
-          </div>
-        </div>`
-      ).join('') + `</div>`;
+      for (let i = 0; i < photoEntries.length; i += PHOTOS_PER_PAGE)
+        photoChunks.push(photoEntries.slice(i, i + PHOTOS_PER_PAGE));
     }
 
     // Hero stats
@@ -2004,17 +1998,28 @@
   <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page 3</div>
 </div>
 
-<!-- ===== PAGE 4: PHOTO RECORD ===== -->
+${photoChunks.map((chunk, pi) => `
+<!-- PAGE ${4 + pi}: PHOTO RECORD -->
 <div class="page">
   <div class="section">
-    <div class="section-head"><div class="section-num">03</div><h2>Photographic Record</h2></div>
-    <p class="section-intro">Progress photographs throughout the programme.</p>
-    ${photoHTML}
+    ${pi === 0 ? `<div class="section-head"><div class="section-num">03</div><h2>Photographic Record</h2></div>
+    <p class="section-intro">Progress photographs throughout the programme.</p>` : `<div class="section-head"><div class="section-num" style="background:#E5E9F0;color:#8893A6;">03</div><h2 style="color:#5B6478;">Photographic Record <span style="font-size:14px;font-weight:500;">(continued)</span></h2></div>
+    <p class="section-intro">&nbsp;</p>`}
+    ${chunk.length === 0 ? `<div class="empty-block">No progress photos uploaded.</div>` :
+      `<div class="photo-grid">${chunk.map(p =>
+        `<div class="photo-item">
+          <div class="photo-frame"><img src="${p.src}" alt="Week ${p.wkNum}"></div>
+          <div class="photo-caption">
+            <div class="photo-week">Week ${p.wkNum}</div>
+            <div class="photo-sub">Month ${p.m} &middot; Week ${p.wk}</div>
+          </div>
+        </div>`
+      ).join('')}</div>`}
   </div>
-  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page 4</div>
-</div>
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page ${4 + pi}</div>
+</div>`).join('')}
 
-<!-- ===== PAGE 5 (LAST): FINAL RESULTS + PERSONAL NOTES ===== -->
+<!-- ===== PAGE ${4 + Math.max(1, photoChunks.length)} (LAST): FINAL RESULTS + PERSONAL NOTES ===== -->
 <div class="page">
   <div class="section">
     <div class="section-head"><div class="section-num">04</div><h2>Final Results</h2></div>
@@ -2041,7 +2046,7 @@
       </div>
     </div>
   </div>
-  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>End of Report</div>
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>End of Report &bull; Page ${4 + Math.max(1, photoChunks.length)}</div>
 </div>
 
 <script>setTimeout(()=>window.print(),500);<\/script>
