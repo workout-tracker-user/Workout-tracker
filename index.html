@@ -346,7 +346,7 @@
       <h3>Trend Chart</h3>
       <div class="metric-toggles" id="metricToggles">
         <button class="metric-toggle active" data-metric="weight">Weight</button>
-        <button class="metric-toggle" data-metric="waist">Waist</button>
+        <button class="metric-toggle" data-metric="waist">Belly</button>
         <button class="metric-toggle" data-metric="steps">Steps</button>
       </div>
       <div class="zone-controls" id="zoneControls"></div>
@@ -378,7 +378,7 @@
     <div class="summary-section">
       <h3>Final Body Measurements &amp; Results</h3>
       <div class="observation-list">
-        <div class="input-field"><label for="final-results">Results (waist, BF%, measurements, anything you tracked)</label><textarea id="final-results" rows="4" placeholder="e.g., Waist: 88cm → 81cm · BF%: 23.7% → 18.2% · Arms: +1.5cm · etc."></textarea></div>
+        <div class="input-field"><label for="final-results">Results (belly, BF%, measurements, anything you tracked)</label><textarea id="final-results" rows="4" placeholder="e.g., Belly: 88cm → 81cm · BF%: 23.7% → 18.2% · Arms: +1.5cm · etc."></textarea></div>
       </div>
     </div>
 
@@ -607,7 +607,7 @@
         <div class="body-meas" data-meas-key="${p}">
           <button type="button" class="body-meas-toggle" data-meas-toggle>Body measurements <span>▾</span></button>
           <div class="body-meas-body" data-meas-body>
-            <div class="input-field"><label for="${p}-waist">Waist (cm)</label><input type="text" id="${p}-waist" placeholder="e.g., 84"></div>
+            <div class="input-field"><label for="${p}-waist">Belly (cm)</label><input type="text" id="${p}-waist" placeholder="e.g., 84"></div>
           </div>
         </div>
         <div class="photo-section">
@@ -1223,7 +1223,7 @@
     }
     const rawPts = all.filter(p => p.value !== null);
     if (rawPts.length < 2) {
-      const labels = {weight:'weight', waist:'waist', steps:'daily steps'};
+      const labels = {weight:'weight', waist:'belly', steps:'daily steps'};
       wrap.innerHTML = `<div class="chart-empty">Log ${labels[metric]||metric} on at least 2 weeks to see the trend</div>`;
       if (legend) legend.style.display = 'none';
       return;
@@ -1551,7 +1551,7 @@
       all.push({ month: m, week: w, value: v });
     }
     const rawPts = all.filter(p => p.value !== null);
-    const labels = {weight:'Weight (kg)', waist:'Waist (cm)', steps:'Daily Steps (avg/week)'};
+    const labels = {weight:'Weight (kg)', waist:'Belly (cm)', steps:'Daily Steps (avg/week)'};
     if (rawPts.length < 2) {
       return `<div class="chart-empty-msg">Not enough data logged for ${labels[metric]||metric}.</div>`;
     }
@@ -1728,201 +1728,294 @@
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>3-Month Progress Report</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  @page { size: A4; margin: 12mm 10mm; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;}
+  @page { size: A4; margin: 10mm; }
   html,body{background:#F2F4F8;}
   body{
     font-family:-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    color:#0B1220;line-height:1.55;-webkit-font-smoothing:antialiased;
-    padding:32px 24px 48px;max-width:920px;margin:0 auto;
+    color:#0B1220;line-height:1.5;-webkit-font-smoothing:antialiased;
   }
 
-  /* ---------- HERO ---------- */
+  /* ---------- PAGE FRAMING ---------- */
+  .page{
+    width:190mm;          /* A4 210mm minus 2x10mm margin */
+    min-height:277mm;     /* A4 297mm minus 2x10mm margin */
+    margin:0 auto 14px;
+    padding:14px;
+    page-break-after:always;
+    break-after:page;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+  .page:last-child{page-break-after:auto;break-after:auto;margin-bottom:0;}
+
+  /* ---------- HERO (page 1) ---------- */
   .hero{
-    position:relative;overflow:hidden;border-radius:32px;padding:56px 44px 44px;color:white;
-    background:radial-gradient(120% 80% at 0% 0%, rgba(56,189,248,0.55) 0%, transparent 55%),
-               radial-gradient(120% 80% at 100% 0%, rgba(99,102,241,0.55) 0%, transparent 55%),
-               radial-gradient(120% 80% at 50% 100%, rgba(139,92,246,0.50) 0%, transparent 60%),
-               linear-gradient(180deg, #0B1220 0%, #0F1E3D 60%, #1E1B4B 100%);
-    box-shadow:0 18px 50px -20px rgba(15,30,61,0.55);
+    border-radius:24px;color:white;padding:42px 38px 36px;
+    background:linear-gradient(135deg, #0B1220 0%, #0F1E3D 45%, #1E1B4B 100%);
+    position:relative;overflow:hidden;
   }
+  /* Solid color blocks instead of radial blobs (radial gradients render unpredictably in print) */
+  .hero::before{
+    content:'';position:absolute;top:-30%;left:-15%;width:55%;height:75%;
+    background:#38BDF8;opacity:0.22;border-radius:50%;filter:blur(2px);
+  }
+  .hero::after{
+    content:'';position:absolute;top:-25%;right:-15%;width:45%;height:70%;
+    background:#6366F1;opacity:0.30;border-radius:50%;filter:blur(2px);
+  }
+  .hero > *{position:relative;z-index:1;}
   .hero .pill{
-    display:inline-flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);
-    padding:8px 16px 8px 14px;border-radius:999px;
-    font-size:12px;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,255,255,0.95);
+    display:inline-flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.20);
+    padding:8px 18px;border-radius:999px;
+    font-size:11.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:white;
   }
-  .hero .pill::before{content:'';width:8px;height:8px;border-radius:50%;background:#38BDF8;box-shadow:0 0 10px #38BDF8;}
+  .hero .pill .dot{width:8px;height:8px;border-radius:50%;background:#38BDF8;}
   .hero h1{
-    font-size:54px;font-weight:800;letter-spacing:-0.022em;line-height:1.05;
-    margin:24px 0 10px;
+    font-size:56px;font-weight:800;letter-spacing:-0.022em;line-height:1.05;
+    margin:22px 0 8px;color:white;
   }
-  .hero .tagline{font-size:18px;color:rgba(186,230,253,0.85);font-weight:500;margin-bottom:36px;}
-
-  .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .hero .tagline{font-size:18px;color:#BAE6FD;font-weight:500;margin-bottom:30px;}
+  .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
   .hero-stat{
-    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
-    border-radius:18px;padding:18px 16px;text-align:center;backdrop-filter:blur(8px);
+    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);
+    border-radius:14px;padding:18px 12px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:96px;
   }
   .hero-stat .lbl{
-    font-size:10.5px;font-weight:600;letter-spacing:0.14em;color:rgba(186,230,253,0.75);
-    text-transform:uppercase;margin-bottom:8px;
+    font-size:10px;font-weight:700;letter-spacing:0.16em;color:#BAE6FD;opacity:0.85;
+    text-transform:uppercase;margin-bottom:10px;white-space:nowrap;
   }
-  .hero-stat .val{font-size:28px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;font-variant-numeric:tabular-nums;}
+  .hero-stat .val{
+    font-size:24px;font-weight:800;letter-spacing:-0.01em;line-height:1;
+    font-variant-numeric:tabular-nums;color:white;
+    display:flex;align-items:baseline;justify-content:center;gap:3px;
+  }
+  .hero-stat .val .unit{font-size:13px;font-weight:600;opacity:0.65;letter-spacing:0;}
   .hero-stat .val.pos{color:#4ADE80;}
   .hero-stat .val.neg{color:#F87171;}
 
+  /* ---------- HERO PAGE EXTRAS ---------- */
+  .hero-overview{
+    margin-top:22px;background:white;border:1px solid #E5E9F0;border-radius:18px;
+    padding:22px 26px;flex:1;
+  }
+  .hero-overview h3{font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#5B6478;margin-bottom:14px;font-weight:700;}
+  .ov-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 28px;}
+  .ov-row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #EEF1F6;padding-bottom:10px;}
+  .ov-row:nth-last-child(-n+2){border-bottom:none;padding-bottom:0;}
+  .ov-row .ov-lbl{font-size:13px;color:#5B6478;}
+  .ov-row .ov-val{font-size:15px;font-weight:700;color:#0B1220;font-variant-numeric:tabular-nums;}
+
   /* ---------- SECTION CARDS ---------- */
   .section{
-    background:white;border-radius:24px;padding:28px 30px;margin-top:18px;
-    box-shadow:0 1px 2px rgba(11,18,32,0.04), 0 8px 24px -8px rgba(11,18,32,0.06);
+    background:white;border:1px solid #E5E9F0;border-radius:20px;padding:24px 26px;
+    flex:1;display:flex;flex-direction:column;
   }
-  .section-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+  .section-head{display:flex;align-items:center;gap:14px;margin-bottom:8px;flex:0 0 auto;}
   .section-num{
     display:inline-flex;align-items:center;justify-content:center;
-    width:32px;height:32px;border-radius:10px;
+    width:34px;height:34px;border-radius:10px;
     background:linear-gradient(135deg,#38BDF8,#6366F1);
-    color:white;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;
-    box-shadow:0 4px 10px -2px rgba(99,102,241,0.45);
+    color:white;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;
   }
   .section h2{font-size:22px;font-weight:800;letter-spacing:-0.018em;color:#0B1220;}
-  .section-intro{font-size:14px;color:#5B6478;margin:0 0 22px 46px;}
+  .section-intro{font-size:13.5px;color:#5B6478;margin:0 0 18px 48px;flex:0 0 auto;}
 
   /* ---------- DATA TABLE ---------- */
-  .data-table-wrap{border-radius:16px;overflow:hidden;border:1px solid #E5E9F0;background:#FBFCFD;}
-  .data-table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums;}
+  .data-table-wrap{border-radius:14px;overflow:hidden;border:1px solid #E5E9F0;background:#FBFCFD;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;}
   .data-table thead th{
-    background:#F4F6FA;padding:11px 14px;text-align:left;
-    font-size:10.5px;letter-spacing:0.10em;font-weight:700;text-transform:uppercase;color:#5B6478;
+    background:#F4F6FA;padding:10px 14px;text-align:left;
+    font-size:10px;letter-spacing:0.12em;font-weight:700;text-transform:uppercase;color:#5B6478;
     border-bottom:1px solid #E5E9F0;
   }
-  .data-table tbody td{padding:11px 14px;border-bottom:1px solid #EEF1F6;color:#0B1220;}
+  .data-table tbody td{padding:10px 14px;border-bottom:1px solid #EEF1F6;color:#0B1220;}
   .data-table tbody tr:last-child td{border-bottom:none;}
-  .data-table tbody tr:hover td{background:#F8FAFC;}
   .data-table tbody td:first-child{font-weight:600;}
   .data-table .month-row td{
-    background:linear-gradient(90deg, rgba(56,189,248,0.10), rgba(99,102,241,0.10));
-    color:#3730A3;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;
-    padding:8px 14px;border-bottom:1px solid #E5E9F0;
+    background:#EEF4FE;
+    color:#3730A3;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;
+    padding:7px 14px;border-bottom:1px solid #E5E9F0;
   }
 
   /* ---------- CHARTS ---------- */
-  .chart-block{margin-bottom:22px;page-break-inside:avoid;}
-  .chart-block:last-child{margin-bottom:0;}
+  .charts-stack{display:flex;flex-direction:column;gap:14px;flex:1;}
   .chart-card{
-    background:#FBFCFD;border:1px solid #E5E9F0;border-radius:18px;padding:18px 16px 12px;
+    background:#FBFCFD;border:1px solid #E5E9F0;border-radius:14px;padding:14px 14px 8px;
+    flex:1;display:flex;flex-direction:column;
   }
-  .chart-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-  .chart-title{font-size:15px;font-weight:700;color:#0B1220;letter-spacing:-0.01em;}
+  .chart-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex:0 0 auto;}
+  .chart-title{font-size:14px;font-weight:700;color:#0B1220;letter-spacing:-0.01em;}
   .chart-caption{
-    font-size:10.5px;letter-spacing:0.10em;text-transform:uppercase;color:#8893A6;font-weight:600;
+    font-size:10px;letter-spacing:0.10em;text-transform:uppercase;color:#8893A6;font-weight:600;
   }
-  .chart-empty-msg{padding:40px;text-align:center;color:#8893A6;font-size:13px;}
+  .chart-card svg{flex:1;width:100%;height:auto;max-height:200px;}
+  .chart-empty-msg{padding:30px;text-align:center;color:#8893A6;font-size:13px;}
 
   /* ---------- PHOTOS ---------- */
-  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:10px;flex:1;align-content:start;}
   .photo-item{
-    background:#FBFCFD;border:1px solid #E5E9F0;border-radius:16px;overflow:hidden;
-    page-break-inside:avoid;
+    background:#FBFCFD;border:1px solid #E5E9F0;border-radius:12px;overflow:hidden;
+    display:flex;flex-direction:column;
+    page-break-inside:avoid;break-inside:avoid;
   }
-  .photo-item img{width:100%;height:auto;display:block;}
+  .photo-frame{
+    position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;background:#0B1220;
+  }
+  .photo-frame img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  }
   .photo-caption{
-    padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:8px 10px;
     border-top:1px solid #E5E9F0;
+    flex:0 0 auto;
+    display:flex;align-items:center;gap:8px;
   }
   .photo-week{
-    display:inline-flex;align-items:center;gap:6px;
-    font-size:13px;font-weight:700;color:#0B1220;
+    font-size:12px;font-weight:800;color:#0B1220;letter-spacing:-0.01em;
+    flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
   }
   .photo-week::before{
-    content:'';width:6px;height:6px;border-radius:50%;
-    background:linear-gradient(135deg,#38BDF8,#6366F1);
+    content:'';width:5px;height:5px;border-radius:50%;background:#6366F1;flex:0 0 auto;
   }
-  .photo-sub{font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:#8893A6;font-weight:600;}
+  .photo-sub{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#8893A6;font-weight:600;flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .empty-block{
     padding:36px;text-align:center;color:#8893A6;font-size:13px;
-    border:1.5px dashed #D8DEE9;border-radius:16px;background:#FBFCFD;
+    border:1.5px dashed #D8DEE9;border-radius:14px;background:#FBFCFD;
   }
 
   /* ---------- NOTES ---------- */
   .notes-stack{display:flex;flex-direction:column;gap:14px;}
   .note{
-    background:#FBFCFD;border:1px solid #E5E9F0;border-radius:16px;
+    background:#FBFCFD;border:1px solid #E5E9F0;border-radius:14px;
     padding:18px 20px;position:relative;
   }
   .note::before{
     content:'';position:absolute;left:0;top:18px;bottom:18px;width:3px;
-    background:linear-gradient(180deg,#38BDF8,#8B5CF6);border-radius:0 3px 3px 0;
+    background:#6366F1;border-radius:0 3px 3px 0;
   }
   .note-lbl{
-    font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:#6366F1;
+    font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#6366F1;
     font-weight:700;margin-bottom:8px;
   }
-  .note-body{font-size:14.5px;color:#0B1220;line-height:1.6;}
+  .note-body{font-size:14px;color:#0B1220;line-height:1.6;white-space:pre-wrap;}
   .note-body.empty{color:#8893A6;font-style:italic;}
 
   /* ---------- FOOTER ---------- */
   .report-footer{
-    margin-top:24px;text-align:center;font-size:11px;letter-spacing:0.18em;
-    text-transform:uppercase;color:#8893A6;font-weight:600;
-    padding:18px;
+    margin-top:auto;text-align:center;font-size:10px;letter-spacing:0.18em;
+    text-transform:uppercase;color:#8893A6;font-weight:700;
+    padding-top:18px;
   }
   .report-footer .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#38BDF8;margin:0 10px;vertical-align:middle;}
 
+  /* ---------- PRINT ---------- */
   @media print {
-    body{padding:0;background:white;}
-    .hero{box-shadow:none;}
-    .section{box-shadow:none;border:1px solid #E5E9F0;}
-    .chart-block,.photo-item,.note{page-break-inside:avoid;}
-    .data-table tr{page-break-inside:avoid;}
+    body{background:white;}
+    .page{margin:0 auto;padding:0;width:auto;min-height:auto;}
+    .hero,.section,.hero-overview,.note,.photo-item,.chart-card,.data-table-wrap,.empty-block{
+      page-break-inside:avoid;break-inside:avoid;
+    }
+    .data-table tr{page-break-inside:avoid;break-inside:avoid;}
     .data-table thead{display:table-header-group;}
   }
 </style>
 </head><body>
 
+<!-- ===== PAGE 1: HERO + OVERVIEW ===== -->
+<div class="page">
   <div class="hero">
-    <div class="pill">3-MONTH PROGRESS</div>
+    <div class="pill"><span class="dot"></span>3-MONTH PROGRESS</div>
     <h1>Transformation</h1>
     <div class="tagline">Strength · Discipline · Results</div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="lbl">Starting</div><div class="val">${startW!==null?startW.toFixed(1)+'<span style="font-size:16px;opacity:0.7;font-weight:600;"> kg</span>':'—'}</div></div>
-      <div class="hero-stat"><div class="lbl">Ending</div><div class="val">${endW!==null?endW.toFixed(1)+'<span style="font-size:16px;opacity:0.7;font-weight:600;"> kg</span>':'—'}</div></div>
-      <div class="hero-stat"><div class="lbl">Change</div><div class="val ${change!==null?(change<0?'pos':(change>0?'neg':'')):''}">${change!==null?(change>0?'+':'')+change.toFixed(1)+'<span style="font-size:16px;opacity:0.7;font-weight:600;"> kg</span>':'—'}</div></div>
-      <div class="hero-stat"><div class="lbl">Workouts</div><div class="val">${totalWorkouts}<span style="font-size:16px;opacity:0.7;font-weight:600;">/36</span></div></div>
+      <div class="hero-stat">
+        <div class="lbl">Starting</div>
+        <div class="val">${startW!==null?startW.toFixed(1)+'<span class="unit">kg</span>':'—'}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="lbl">Ending</div>
+        <div class="val">${endW!==null?endW.toFixed(1)+'<span class="unit">kg</span>':'—'}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="lbl">Change</div>
+        <div class="val ${change!==null?(change<0?'pos':(change>0?'neg':'')):''}">${change!==null?(change>0?'+':'')+change.toFixed(1)+'<span class="unit">kg</span>':'—'}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="lbl">Workouts</div>
+        <div class="val">${totalWorkouts}<span class="unit">/36</span></div>
+      </div>
     </div>
   </div>
 
+  <div class="hero-overview">
+    <h3>Programme Overview</h3>
+    <div class="ov-grid">
+      <div class="ov-row"><span class="ov-lbl">Duration</span><span class="ov-val">12 weeks</span></div>
+      <div class="ov-row"><span class="ov-lbl">Total sessions</span><span class="ov-val">36 planned</span></div>
+      <div class="ov-row"><span class="ov-lbl">Sessions completed</span><span class="ov-val">${totalWorkouts} / 36</span></div>
+      <div class="ov-row"><span class="ov-lbl">Consistency</span><span class="ov-val">${Math.round((totalWorkouts/36)*100)}%</span></div>
+      <div class="ov-row"><span class="ov-lbl">Starting weight</span><span class="ov-val">${startW!==null?startW.toFixed(1)+' kg':'—'}</span></div>
+      <div class="ov-row"><span class="ov-lbl">Ending weight</span><span class="ov-val">${endW!==null?endW.toFixed(1)+' kg':'—'}</span></div>
+      <div class="ov-row"><span class="ov-lbl">Total weight change</span><span class="ov-val">${change!==null?(change>0?'+':'')+change.toFixed(1)+' kg':'—'}</span></div>
+      <div class="ov-row"><span class="ov-lbl">Generated</span><span class="ov-val">${new Date().toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}</span></div>
+    </div>
+  </div>
+
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page 1</div>
+</div>
+
+<!-- ===== PAGE 2: WEEKLY PROGRESS TABLE ===== -->
+<div class="page">
   <div class="section">
     <div class="section-head"><div class="section-num">01</div><h2>Weekly Progress</h2></div>
     <p class="section-intro">Week-by-week record across the 12-week programme.</p>
     <div class="data-table-wrap">
-      <table class="data-table"><thead><tr><th>Week</th><th>Date</th><th>Weight</th><th>Waist</th><th>Avg Steps</th><th>Workouts</th></tr></thead><tbody>${weeklyRows}</tbody></table>
+      <table class="data-table"><thead><tr><th>Week</th><th>Date</th><th>Weight</th><th>Belly</th><th>Avg Steps</th><th>Workouts</th></tr></thead><tbody>${weeklyRows}</tbody></table>
     </div>
   </div>
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page 2</div>
+</div>
 
+<!-- ===== PAGE 3: TREND CHARTS (3 graphs on one page) ===== -->
+<div class="page">
   <div class="section">
     <div class="section-head"><div class="section-num">02</div><h2>Trend Analysis</h2></div>
     <p class="section-intro">Smoothed trends with target zones for each tracked metric.</p>
-    <div class="chart-block"><div class="chart-card">
-      <div class="chart-meta"><div class="chart-title">Weight</div><div class="chart-caption">kg · weeks 1–12</div></div>
-      ${weightSVG}
-    </div></div>
-    <div class="chart-block"><div class="chart-card">
-      <div class="chart-meta"><div class="chart-title">Waist</div><div class="chart-caption">cm · weeks 1–12</div></div>
-      ${waistSVG}
-    </div></div>
-    <div class="chart-block"><div class="chart-card">
-      <div class="chart-meta"><div class="chart-title">Daily Steps</div><div class="chart-caption">weekly avg · weeks 1–12</div></div>
-      ${stepsSVG}
-    </div></div>
+    <div class="charts-stack">
+      <div class="chart-card">
+        <div class="chart-meta"><div class="chart-title">Weight</div><div class="chart-caption">kg · weeks 1–12</div></div>
+        ${weightSVG}
+      </div>
+      <div class="chart-card">
+        <div class="chart-meta"><div class="chart-title">Belly</div><div class="chart-caption">cm · weeks 1–12</div></div>
+        ${waistSVG}
+      </div>
+      <div class="chart-card">
+        <div class="chart-meta"><div class="chart-title">Daily Steps</div><div class="chart-caption">weekly avg · weeks 1–12</div></div>
+        ${stepsSVG}
+      </div>
+    </div>
   </div>
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page 3</div>
+</div>
 
+<!-- ===== PAGE 4: PHOTO RECORD ===== -->
+<div class="page">
   <div class="section">
     <div class="section-head"><div class="section-num">03</div><h2>Photographic Record</h2></div>
     <p class="section-intro">Progress photographs throughout the programme.</p>
     ${photoHTML}
   </div>
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>Page 4</div>
+</div>
 
+<!-- ===== PAGE 5 (LAST): FINAL RESULTS + PERSONAL NOTES ===== -->
+<div class="page">
   <div class="section">
     <div class="section-head"><div class="section-num">04</div><h2>Final Results</h2></div>
     <div class="notes-stack">
@@ -1931,10 +2024,8 @@
         <div class="note-body ${finalResults?'':'empty'}">${finalResults || 'No results recorded.'}</div>
       </div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-head"><div class="section-num">05</div><h2>Personal Notes</h2></div>
+    <div class="section-head" style="margin-top:24px;"><div class="section-num">05</div><h2>Personal Notes</h2></div>
     <div class="notes-stack">
       <div class="note">
         <div class="note-lbl">Energy, Mood &amp; Recovery</div>
@@ -1950,8 +2041,8 @@
       </div>
     </div>
   </div>
-
-  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>${new Date().toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}</div>
+  <div class="report-footer">3-Month Workout Tracker<span class="dot"></span>End of Report</div>
+</div>
 
 <script>setTimeout(()=>window.print(),500);<\/script>
 </body></html>`;
@@ -2093,7 +2184,7 @@
       { label: 'WORKOUTS', value: `${totalWorkouts}/36`, accent: '#38BDF8' },
       { label: 'CONSISTENCY', value: `${consistency}%`, accent: '#6366F1' },
       { label: 'AVG STEPS', value: avgSteps !== null ? avgSteps.toLocaleString() : '—', accent: '#8B5CF6' },
-      { label: 'WAIST', value: waistChange !== null ? `${waistChange>0?'+':''}${waistChange.toFixed(1)} cm` : '—', accent: '#06B6D4' }
+      { label: 'BELLY', value: waistChange !== null ? `${waistChange>0?'+':''}${waistChange.toFixed(1)} cm` : '—', accent: '#06B6D4' }
     ];
     const gridY = 720;
     const gap = 22;
